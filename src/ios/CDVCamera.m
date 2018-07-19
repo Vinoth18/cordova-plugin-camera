@@ -578,10 +578,10 @@ static NSString* toBase64(NSData* data) {
         CDVPluginResult* result;
         if (picker.sourceType == UIImagePickerControllerSourceTypeCamera && [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] != ALAuthorizationStatusAuthorized) {
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"has no access to camera"];
-        } else if (picker.sourceType != UIImagePickerControllerSourceTypeCamera && [ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"has no access to assets"];
-        } else {
+        } else if (picker.sourceType == UIImagePickerControllerSourceTypePhotoLibrary){
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Library"];
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no image selected"];
         }
 
         [weakSelf.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
@@ -773,7 +773,7 @@ static NSString* toBase64(NSData* data) {
 }
 
 - (IBAction)cancelPhoto {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.delegate imagePickerControllerDidCancel:(UIImagePickerController *)self];
 }
 
 - (void)handleNotification:(NSNotification*)notification {
@@ -1133,7 +1133,7 @@ static NSString* toBase64(NSData* data) {
 
 - (void)switchToCameraRoll {
     // Switch the UIImagePickerController to show the saved photos album
-//    self.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    self.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
    [self.delegate imagePickerControllerDidCancel:(UIImagePickerController *)self];
 }
 
