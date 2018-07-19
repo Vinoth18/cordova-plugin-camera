@@ -36,6 +36,8 @@
 
 #define CDV_PHOTO_PREFIX @"cdv_photo_"
 
+NSString* fileLocation;
+
 static NSSet* org_apache_cordova_validArrowDirections;
 
 static NSString* toBase64(NSData* data) {
@@ -479,14 +481,14 @@ static NSString* toBase64(NSData* data) {
             if (data) {
 
                 NSString* extension = options.encodingType == EncodingTypePNG? @"png" : @"jpg";
-                NSString* filePath = [self tempFilePath:extension];
+                fileLocation = [self tempFilePath:extension];
                 NSError* err = nil;
 
                 // save file
-                if (![data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+                if (![data writeToFile:fileLocation options:NSAtomicWrite error:&err]) {
                     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
                 } else {
-                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[self urlTransformer:[NSURL fileURLWithPath:filePath]] absoluteString]];
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[self urlTransformer:[NSURL fileURLWithPath:fileLocation]] absoluteString]];
                 }
             }
         }
@@ -695,14 +697,13 @@ static NSString* toBase64(NSData* data) {
         {
             NSError* err = nil;
             NSString* extension = self.pickerController.pictureOptions.encodingType == EncodingTypePNG ? @"png":@"jpg";
-            NSString* filePath = [self tempFilePath:extension];
 
             // save file
-            if (![self.data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+            if (![self.data writeToFile:fileLocation options:NSAtomicWrite error:&err]) {
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[err localizedDescription]];
             }
             else {
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[self urlTransformer:[NSURL fileURLWithPath:filePath]] absoluteString]];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[self urlTransformer:[NSURL fileURLWithPath:fileLocation]] absoluteString]];
             }
         }
             break;
