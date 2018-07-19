@@ -309,8 +309,8 @@ static NSString* toBase64(NSData* data) {
     BOOL hasErrors = NO;
 
     // clear contents of NSTemporaryDirectory
-    NSString* tempDirectoryPath = NSTemporaryDirectory();
-    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:tempDirectoryPath];
+    NSString* cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
+    NSDirectoryEnumerator* directoryEnumerator = [fileMgr enumeratorAtPath:cachePath];
     NSString* fileName = nil;
     BOOL result;
 
@@ -319,7 +319,7 @@ static NSString* toBase64(NSData* data) {
         if (![fileName hasPrefix:CDV_PHOTO_PREFIX]) {
             continue;
         }
-        NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
+        NSString* filePath = [cachePath stringByAppendingPathComponent:fileName];
         result = [fileMgr removeItemAtPath:filePath error:&err];
         if (!result && err) {
             NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
